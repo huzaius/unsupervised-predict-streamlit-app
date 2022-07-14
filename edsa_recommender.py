@@ -26,6 +26,7 @@
 
 """
 # Streamlit dependencies
+import email
 import streamlit as st
 
 # Data handling dependencies
@@ -37,6 +38,7 @@ from utils.data_loader import load_movie_titles
 from recommenders.collaborative_based import collab_model
 from recommenders.content_based import content_model
 
+
 # Data Loading
 title_list = load_movie_titles('resources/data/movies.csv')
 
@@ -45,11 +47,12 @@ def main():
 
     # DO NOT REMOVE the 'Recommender System' option below, however,
     # you are welcome to add more options to enrich your app.
-    page_options = ["Recommender System","Solution Overview"]
+    page_options = ["Recommender System","EDA","Solution Overview","Feedback"]
 
     # -------------------------------------------------------------------
     # ----------- !! THIS CODE MUST NOT BE ALTERED !! -------------------
     # -------------------------------------------------------------------
+    st.sidebar.image('resources\imgs\Screen_lot_1.png',use_column_width=True)
     page_selection = st.sidebar.selectbox("Choose Option", page_options)
     if page_selection == "Recommender System":
         # Header contents
@@ -100,12 +103,78 @@ def main():
     # -------------------------------------------------------------------
 
     # ------------- SAFE FOR ALTERING/EXTENSION -------------------
+
+    if page_selection == "EDA":
+        pass
+
+
     if page_selection == "Solution Overview":
         st.title("Solution Overview")
         st.write("Describe your winning approach on this page")
 
+        st.subheader("Team NM 3")
+		#st.markdown("<h3 style='text-align: center; color: green; background: #D3D3D3; margin: 3px'>TEAM NM2</h1>", unsafe_allow_html=True)
+        
+
+        from PIL import Image
+        prince,izu = st.columns(2)
+        dan,huzaifa,jerry =  st.columns(3)
+
+        dan_img = Image.open('resources\imgs\daniel.jpg')
+        jerry_img = Image.open('resources\imgs\jerry.jpg')
+        huzaifa_img = Image.open('resources\imgs\huzaifa.jpg')
+        prince_img = Image.open('resources\imgs\Prince_Okon.png')
+        izu_img = Image.open('resources\imgs\izu.jpg')
+
+        with prince:
+            st.image(prince_img,caption='Prince Okon- Team lead')
+
+        with huzaifa:
+            st.image(huzaifa_img,caption='Huzaifa Abu - Technical Lead')
+
+        with dan:
+            st.image(dan_img,caption='Odukoya Daniel - Administrator')
+
+        with jerry:
+            st.image(jerry_img,caption='Jerry Iriri - Chief Designer')
+        
+
     # You may want to add more sections here for aspects such as an EDA,
     # or to provide your business pitch.
+
+
+
+    if page_selection == "Feedback":
+        
+        st.session_state;
+        with st.form(key = 'Feedback'):
+            
+            name = st.text_input('Name')
+            mail = st.text_input('Email')
+            phone = st.text_input('Phone Number')
+            
+            #radio buttons
+            feed_radio = st.radio('Select an option',('Feedback','Contact Us','Other'),key='radio_option')         
+            
+            subject = st.text_input('Subject') 
+            message = st.text_area('Message')
+            
+            if st.form_submit_button('Submit'):
+                if feed_radio != "Other":
+                    st.success('Your {} form has been logged'.format(feed_radio))
+
+                else:
+                    st.success('Your comment has been logged'.format(feed_radio))
+
+           
+
+            
+            
+
+            
+            
+
+                
 
 
 if __name__ == '__main__':
