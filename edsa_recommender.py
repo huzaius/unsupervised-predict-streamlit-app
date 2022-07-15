@@ -32,6 +32,7 @@ import streamlit as st
 # Data handling dependencies
 import pandas as pd
 import numpy as np
+from sympy import im
 
 # Custom Libraries
 from utils.data_loader import load_movie_titles
@@ -47,7 +48,7 @@ def main():
 
     # DO NOT REMOVE the 'Recommender System' option below, however,
     # you are welcome to add more options to enrich your app.
-    page_options = ["Recommender System","EDA","Solution Overview","Feedback"]
+    page_options = ["Recommender System","EDA","Solution Overview","Feedback",'About']
 
     # -------------------------------------------------------------------
     # ----------- !! THIS CODE MUST NOT BE ALTERED !! -------------------
@@ -112,7 +113,10 @@ def main():
         st.title("Solution Overview")
         st.write("Describe your winning approach on this page")
 
-        st.subheader("Team NM 3")
+        
+    if page_selection == "About":    
+        #st.subheader("Team NM 3")
+        st.markdown("<h3 style='text-align: center; color: magenta; background: cyan; margin: 3px'>TEAM NM2</h1>", unsafe_allow_html=True)
 		#st.markdown("<h3 style='text-align: center; color: green; background: #D3D3D3; margin: 3px'>TEAM NM2</h1>", unsafe_allow_html=True)
         
 
@@ -137,6 +141,9 @@ def main():
 
         with jerry:
             st.image(jerry_img,caption='Jerry Iriri - Chief Designer')
+
+        with izu:
+            st.image(izu_img,caption='Izunna Eneude - Quality Control')
         
 
     # You may want to add more sections here for aspects such as an EDA,
