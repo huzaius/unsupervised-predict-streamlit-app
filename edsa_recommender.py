@@ -38,6 +38,7 @@ from sympy import im
 from utils.data_loader import load_movie_titles
 from recommenders.collaborative_based import collab_model
 from recommenders.content_based import content_model
+from recommenders.mymodules import genre_extractor
 
 
 # Data Loading
@@ -106,7 +107,52 @@ def main():
     # ------------- SAFE FOR ALTERING/EXTENSION -------------------
 
     if page_selection == "EDA":
-        pass
+        #load movie and rating 
+        mov_df = pd.read_csv('resources\data\movies.csv')
+        rate_df = pd.read_csv('resources\\data\\ratings.csv')
+        
+        #movie and rating dataframe 
+        movie_rating_df = pd.merge(left=mov_df,right=rate_df,how='inner',left_on='movieId',right_on='movieId')
+        movie_rating_df.drop(['movieId','timestamp'],axis=1,inplace=True)
+        #delete dataframes to save memory
+        del mov_df
+        del rate_df
+
+        #Showing dataframe
+        if st.checkbox("Preview Dataframe"):
+            
+            if st.button('Dataframe'):
+                st.write('Showing dataframe')
+                st.write('df')
+            
+            if st.button('Head'):
+                st.write('Showing first 5 rows')
+                st.write(movie_rating_df.head())
+
+            if st.button('Tail'):
+                st.write('Showing last 5 rows')
+                st.write(movie_rating_df.tail())
+
+        #Searching movie GDetails
+        st.write('Show for movies details')
+        movie_title = movie_rating_df.title.unique()
+        movie_genre = st.selectbox('Select a Movie',movie_title)
+            
+        if movie_genre == movie_title:
+            selected_movie = movie_rating_df[movie_rating_df.title == movie_title]
+            df_columns = ['Title','Genre','Highest Rating','Lowest Ratings','Average Rating','Total User Review']
+            df_input = [movie_title,selected_movie.genres,round(selected_movie.rating.max(),3),round(selected_movie.rating.min(),3),round(selected_movie.rating.mean(),3),selected_movie.userId.count()]
+            sel_mov = pd.DataFrame(data=df_input,columns=df_columns)
+            sel_mov
+            st.sucess('{} has been rated {} times with an IMDB average of {}'.format(movie_title,selected_movie.userId.count(),round(selected_movie.rating.mean(),3)))
+
+        
+        st.write('Show movies by Genre')
+        genres = genre_extractor(movie_rating_df,'genres')
+        
+
+
+
 
 
     if page_selection == "Solution Overview":
