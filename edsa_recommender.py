@@ -32,14 +32,19 @@ import streamlit as st
 # Data handling dependencies
 import pandas as pd
 import numpy as np
-from sympy import im
+
+#from sympy import im
 
 # Custom Libraries
 from utils.data_loader import load_movie_titles
 from recommenders.collaborative_based import collab_model
 from recommenders.content_based import content_model
-from recommenders.mymodules import genre_extractor
 
+#various functions 
+from eda.mymodules import *
+
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Data Loading
 title_list = load_movie_titles('resources/data/movies.csv')
@@ -49,7 +54,7 @@ def main():
 
     # DO NOT REMOVE the 'Recommender System' option below, however,
     # you are welcome to add more options to enrich your app.
-    page_options = ["Recommender System","EDA","Solution Overview","Feedback",'About']
+    page_options = ["Recommender System","EDA","Solution Overview","Feedback",'About','Documentation']
 
     # -------------------------------------------------------------------
     # ----------- !! THIS CODE MUST NOT BE ALTERED !! -------------------
@@ -120,35 +125,42 @@ def main():
 
         #Showing dataframe
         if st.checkbox("Preview Dataframe"):
-            
+
+            st.write('Movie Dataset')
+            col1,col2,col3 = st.columns([1,2,3])
+
             if st.button('Dataframe'):
                 st.write('Showing dataframe')
-                st.write('df')
+                st.dataframe(movie_rating_df,)
             
-            if st.button('Head'):
+            if st.button('First Five'):
                 st.write('Showing first 5 rows')
-                st.write(movie_rating_df.head())
+                st.dataframe(movie_rating_df.head())
 
-            if st.button('Tail'):
+            if st.button('Last Five'):
                 st.write('Showing last 5 rows')
-                st.write(movie_rating_df.tail())
+                st.dataframe(movie_rating_df.tail())
 
         #Searching movie GDetails
         st.write('Show for movies details')
         movie_title = movie_rating_df.title.unique()
-        movie_genre = st.selectbox('Select a Movie',movie_title)
+        movie_genre = st.selectbox('Select a Movie',movie_title[:5000])
             
-        if movie_genre == movie_title:
+        if (movie_genre == movie_title.all()):
             selected_movie = movie_rating_df[movie_rating_df.title == movie_title]
             df_columns = ['Title','Genre','Highest Rating','Lowest Ratings','Average Rating','Total User Review']
             df_input = [movie_title,selected_movie.genres,round(selected_movie.rating.max(),3),round(selected_movie.rating.min(),3),round(selected_movie.rating.mean(),3),selected_movie.userId.count()]
             sel_mov = pd.DataFrame(data=df_input,columns=df_columns)
-            sel_mov
+            st.write(sel_mov)
             st.sucess('{} has been rated {} times with an IMDB average of {}'.format(movie_title,selected_movie.userId.count(),round(selected_movie.rating.mean(),3)))
 
         
         st.write('Show movies by Genre')
         genres = genre_extractor(movie_rating_df,'genres')
+        st.write(genres)
+
+        st.write('User rating')
+
         
 
 
@@ -156,15 +168,76 @@ def main():
 
 
     if page_selection == "Solution Overview":
-        st.title("Solution Overview")
+        st.title("The Screen lot Project")
         st.write("Describe your winning approach on this page")
+        st.markdown('''Having been given a sourced and clean data set, (the MovieLens dataset) which has been pre-enriched with additional data, and resampled for fair evaluation purposes, We have a task to use this raw data to build a Recommendation system algorithm (Screen lot) based on content or collaborative filtering, capable of accurately predicting how a user will rate a movie they have not yet viewed, based on their historical preferences. The idea of this algorithm is to predict the movies that would be enjoyed by a viewer based on their reactions to the movies that they have already watched. For more information on how Screenlot works and the technical details of the App, please check out the [documentation] page.''')
+        
 
+
+    # You may want to add more sections here for aspects such as an EDA,
+    # or to provide your business pitch.
+
+
+
+    if page_selection == "Feedback":
+        
+        #st.session_state;
+        with st.container():
+            
+            name = st.text_input('Name')
+            mail = st.text_input('Email')
+            phone = st.text_input('Phone Number')
+            
+            #radio buttons
+            feed_radio = st.radio('Select an option',('Feedback','Contact Us','Other'),key='radio_option')         
+            
+            if feed_radio == 'Other':
+                subject = st.text_input('Subject') 
+            
+            message = st.text_area('Message')
+            
+            if st.button('Submit'):
+                if feed_radio != "Other":
+                    st.success('Your {} form has been logged'.format(feed_radio))
+
+                else:
+                    st.success('Your comment has been logged'.format(feed_radio))
+
+
+    if page_selection == "Documentation":
+       
+        st.title('Documentation')
+        
+        st.header("Overview")
+        st.write("In order to maximize profit and  guarantee a personalized experience for customers, we have built a movie recommendation app that iterates through a viewer's previous viewing preferences and movie viewer ratings and uses the information contained therein to predict what unseen movie the viewer is likely to enjoy. most online content providers rely on recommendation systems such as this to maximally exploit the long tail. The long tail is a business strategy that allows companies to realize significant profits by selling low volumes of hard-to-find items to many customers, instead of only selling large volumes of a reduced number of popular items (For more on long tail, please click [*here*](https://medium.com/@kyasar.mail/recommender-systems-what-long-tail-tells-91680f10a5b2)).")
+        st.image('https://media.wired.com/photos/5a5957cf2bbf59566d73366b/master/w_1600%2Cc_limit/FF_170_tail6_f.gif',caption='Long Tail')
+        st.write("Our recommendation system allows the client to achieve this by actively recommending products based on the app's built-in algorithm rather than relying on the customers to scan through potentially millions of options in order to find these products themselves. A broad base of consumer sentiment, spanning multiple demographic and geographic categories is used as input to train the algorithm, hence increasing the accuracy of the app, and providing sound insights that convert into sound matches as regards movies that unique viewers are likely to enjoy. ")
+        
+        
+        st.subheader('Featured  Recommendation Engines')
+        st.write("Of the three main types of recommendation engines that exist, Our app features two main recommendation engines as detailed below.")
+
+        st.subheader("Collaborative filtering")  
+        st.write("Collaborative filtering focuses on collecting and analyzing data on user behavior, activities, and preferences, to predict what a person will like, based on their similarity to other users. To plot and calculate these similarities, collaborative filtering uses a matrix-style formula. An advantage of collaborative filtering is that it doesn’t need to analyze or understand the content (products, films, books). It simply picks items to recommend based on what they know about the user.")
+
+        st.subheader("Content-based filtering")
+        st.write("Content-based filtering works on the principle that if you like a particular item, you will also like this other item. To make recommendations, algorithms use a profile of the customer’s preferences and a description of an item (genre, product type, color, word length etc) to work out the similarity of items using cosine and Euclidean distances. The downside of content-based filtering is that the system is limited to recommending products or content similar to what the person is already buying or using. It can’t go beyond this to recommend other types of products or content. For example, it couldn’t recommend products beyond")
+
+        st.subheader("Data Details")
+        st.write("This dataset consists of several million 5-star ratings obtained from users of the online [MovieLens](http://movielens.org/) movie recommendation service. The MovieLens dataset has long been used by the industry. For this project, we'll be using a special version of the MovieLens dataset which has been enriched with additional data and resampled for fair evaluation purposes. The data for the MovieLens dataset is maintained by the [GroupLens](http://grouplens.org/) research group in the Department of Computer Science and Engineering at the University of Minnesota. Additional movie content data was legally scraped from [IMDB](https://www.imdb.com/).")
+
+        st.subheader("Model performance")
+        st.write("The evaluation metric for this competition is [Root Mean Square Error](https://surprise.readthedocs.io/en/stable/accuracy.html). Root Mean Square Error (RMSE) is commonly used in regression analysis and forecasting and measures the standard deviation of the residuals arising between predicted and actual observed values for a modeling process. For our task of generating user movie ratings via recommendation algorithms, the formula is given by:")
+        st.image("resources/imgs/rsme.jpg",caption="Root Mean Squared Error")
+        st.write('''Where R is the total number of recommendations generated for users and movies, with $r_{ui} $ and $\hat{r_{ui}}$ being the true, and predicted ratings for user ***u*** watching movie ***i***, respectively.''')
+        
         
     if page_selection == "About":    
-        #st.subheader("Team NM 3")
+        #st.subheader("Team NM 2")
         st.markdown("<h3 style='text-align: center; color: magenta; background: cyan; margin: 3px'>TEAM NM2</h1>", unsafe_allow_html=True)
-		#st.markdown("<h3 style='text-align: center; color: green; background: #D3D3D3; margin: 3px'>TEAM NM2</h1>", unsafe_allow_html=True)
-        
+        st.write("Team NM-2  is a team at the explore DS academy, 2022 Data science cohort and we employ our training here at explore DS to extract valuable insights from all kinds of raw data. Data collection and analysis are increasingly becoming very useful in industries and economies worldwide. With advances in science and technology (particularly information technology), we are in an age where an astounding quantity of data in many different forms is generated every second. This data usually has hidden insights on trends, habits, developments, changes, etc that may not be immediately identified, but are very valuable to companies and other entities for the purpose of making informed decisions.")
+        st.write("Before now, it was near impossible to process these large swaths of data in order to reveal these insights. With the developments in the field of data science and through the expertise which we seek to express, we will show how data can be processed to not only reveal the insight hidden in them but also to present the discoveries made in the process in a form that is digestible by non-technical audiences. Our team is made up of 5  professionals who excel in the fields of Business Management, marketing and promotions, technical data science, IT communications, and Administration. Please refer below for  the full profiles of all team members.")
+		#st.write('Before now, it was near impossible to process these large swaths of data in order to reveal these insights. With the developments in the field of data science and through the expertise which we seek to express, we will show how data can be processed to not only reveal the insight hidden in them but also to present the discoveries made in the process in a form that is digestible by non-technical audiences. Our team is made up of 5  professionals who excel in the fields of Business Management, marketing and promotions, technical data science, IT communications, and Administration. Please refer to this link to access the full profiles of all team members.')
 
         from PIL import Image
         prince,izu = st.columns(2)
@@ -190,38 +263,8 @@ def main():
 
         with izu:
             st.image(izu_img,caption='Izunna Eneude - Quality Control')
-        
+              
 
-    # You may want to add more sections here for aspects such as an EDA,
-    # or to provide your business pitch.
-
-
-
-    if page_selection == "Feedback":
-        
-        st.session_state;
-        with st.form(key = 'Feedback'):
-            
-            name = st.text_input('Name')
-            mail = st.text_input('Email')
-            phone = st.text_input('Phone Number')
-            
-            #radio buttons
-            feed_radio = st.radio('Select an option',('Feedback','Contact Us','Other'),key='radio_option')         
-            
-            subject = st.text_input('Subject') 
-            message = st.text_area('Message')
-            
-            if st.form_submit_button('Submit'):
-                if feed_radio != "Other":
-                    st.success('Your {} form has been logged'.format(feed_radio))
-
-                else:
-                    st.success('Your comment has been logged'.format(feed_radio))
-
-           
-
-            
             
 
             

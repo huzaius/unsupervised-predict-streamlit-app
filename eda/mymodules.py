@@ -1,3 +1,6 @@
+
+
+
 def genre_extractor(df, col):
     """
     Returns a list of all unique features in a DataFrame columns separated by "|"
@@ -132,3 +135,12 @@ def plot_ratings(count, n, color='#4DA017', best=True, method='mean'):
 
 
 
+def loading_data():
+    #\genome_scores.csv
+    movies_df =  pd.read_csv('resources/data/movies.csv', index_col='movieId')
+    imdb_df =  pd.read_csv('resources/data/imdb_data.csv', index_col='movieId')
+    links_df =  pd.read_csv('resources/data/links.csv', index_col='movieId')
+    genome_scores =  pd.read_csv('resources/data/genome_scores.csv', index_col='movieId')
+    genome_tags =  pd.read_csv('resources/data/genome_tags.csv', index_col='tagId')
+    #tags =  pd.read_csv('/kaggle/input/edsa-movie-recommendation-2022/tags.csv')
+    
