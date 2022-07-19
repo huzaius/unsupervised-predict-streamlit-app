@@ -27,11 +27,14 @@
 """
 # Streamlit dependencies
 import email
+from turtle import onclick, window_width
+from requests import options
 import streamlit as st
 
 # Data handling dependencies
 import pandas as pd
 import numpy as np
+
 
 #from sympy import im
 
@@ -45,6 +48,9 @@ from eda.mymodules import *
 
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+#import re
+
 
 # Data Loading
 title_list = load_movie_titles('resources/data/movies.csv')
@@ -118,46 +124,71 @@ def main():
         
         #movie and rating dataframe 
         movie_rating_df = pd.merge(left=mov_df,right=rate_df,how='inner',left_on='movieId',right_on='movieId')
-        movie_rating_df.drop(['movieId','timestamp'],axis=1,inplace=True)
+        movie_rating_df.drop(['movieId','timestamp','userId'],axis=1,inplace=True)
         #delete dataframes to save memory
         del mov_df
         del rate_df
 
+        gp_mov = movie_rating_df.groupby(by=['title','genres']).mean()#.sort_values(by='rating',ascending=False)
+        
+        gp_mov.reset_index(inplace=True)
+        pattern = '\((\d{4})\)'
+        gp_mov['year'] = gp_mov.title.str.extract(pattern,expand=False).fillna(2016).astype('int64')
+
         #Showing dataframe
-        if st.checkbox("Preview Dataframe"):
+        st.subheader('Movie Dataset')
 
-            st.write('Movie Dataset')
-            col1,col2,col3 = st.columns([1,2,3])
-
-            if st.button('Dataframe'):
-                st.write('Showing dataframe')
-                st.dataframe(movie_rating_df,)
+        message = 'Move sliders to filter dataframe'
+        year_slide = ''
+        slider_1, slider_2 = st.slider('%s' % (message),0,len(gp_mov)-1,[0,len(gp_mov)-1],1)
+        yslider_1,y_slider_2 = st.slider('%s' % (message),1900,2020,(1902,2016))
+        
+        st.success('Starts from {} to {} '.format(slider_1,slider_2))
+        
+        st.dataframe(gp_mov.loc[slider_1:slider_2])
+        st.write(download_csv('Filtered Data Frame',gp_mov.iloc[:][slider_1:slider_2]),unsafe_allow_html=True)
+        #st.write(df_filter('Move slider to filter dataframe',movie_rating_df))
+        #st.dataframe(movie_rating_df[slider_range])
             
-            if st.button('First Five'):
-                st.write('Showing first 5 rows')
-                st.dataframe(movie_rating_df.head())
+        
 
-            if st.button('Last Five'):
-                st.write('Showing last 5 rows')
-                st.dataframe(movie_rating_df.tail())
+        
 
         #Searching movie GDetails
         st.write('Show for movies details')
-        movie_title = movie_rating_df.title.unique()
-        movie_genre = st.selectbox('Select a Movie',movie_title[:5000])
-            
-        if (movie_genre == movie_title.all()):
-            selected_movie = movie_rating_df[movie_rating_df.title == movie_title]
-            df_columns = ['Title','Genre','Highest Rating','Lowest Ratings','Average Rating','Total User Review']
-            df_input = [movie_title,selected_movie.genres,round(selected_movie.rating.max(),3),round(selected_movie.rating.min(),3),round(selected_movie.rating.mean(),3),selected_movie.userId.count()]
-            sel_mov = pd.DataFrame(data=df_input,columns=df_columns)
-            st.write(sel_mov)
-            st.sucess('{} has been rated {} times with an IMDB average of {}'.format(movie_title,selected_movie.userId.count(),round(selected_movie.rating.mean(),3)))
+        movie_title = gp_mov.title.unique()
+        movie_sel = st.selectbox('Select a Movie',movie_title)
+        
+        if (movie_sel in movie_title):
+            selected_movie = gp_mov[gp_mov.title == movie_sel]
 
+
+            #st.write(selected_movie)
+            df_columns = {'Title':[movie_sel],
+                            'Year': selected_movie.year,
+                            'Genre':[selected_movie.genres.unique()[0]],
+                            'Highest Rating':[round(selected_movie.rating.max(),1)],
+                            'Lowest Ratings':[round(selected_movie.rating.min(),1)],
+                            'Average Rating':[round(selected_movie.rating.mean(),1)],
+                            'Total User Review':[selected_movie.shape[0]]}
+
+            st.dataframe(df_columns)
+            #df_input = [movie_sel,selected_movie.genres[0],round(selected_movie.rating.max(),1),round(selected_movie.rating.min(),1),round(selected_movie.rating.mean(),1),selected_movie.shape[0]]
+           
+            st.success('{} has been rated {} time(s) with an average IMDB rating  of {}'.format(movie_sel,selected_movie.shape[0],round(selected_movie.rating.mean(),2)))
+
+        else:
+            st.warning('Movie not present in database')
         
         st.write('Show movies by Genre')
         genres = genre_extractor(movie_rating_df,'genres')
-        st.write(genres)
+        genres_sel = st.selectbox('Search movies by Genre',genres[1:])
+
+        if genres_sel in genres:
+            gp_mov['genres_clean'] = gp_mov.genres.apply(lambda x: ' '.join(x.split('|')))
+            gp_mov['genreclass'] = gp_mov.genres_clean.str.find(genres_sel)
+            st.dataframe(gp_mov[gp_mov.genreclass >=0][['title','genres','rating','year']])
+            gp_mov.drop(['genres_clean','genreclass'],inplace=True,axis=1)
 
         st.write('User rating')
 
@@ -251,18 +282,28 @@ def main():
 
         with prince:
             st.image(prince_img,caption='Prince Okon- Team lead')
-
+            with st.expander("View Profile"):
+                st.write('Profile')
+        
         with huzaifa:
             st.image(huzaifa_img,caption='Huzaifa Abu - Technical Lead')
+            with st.expander("View Profile"):
+                st.write('Profile')
 
         with dan:
             st.image(dan_img,caption='Odukoya Daniel - Administrator')
+            with st.expander("View Profile"):
+                st.write('Profile')
 
         with jerry:
             st.image(jerry_img,caption='Jerry Iriri - Chief Designer')
+            with st.expander("View Profile"):
+                st.write('Profile')
 
         with izu:
             st.image(izu_img,caption='Izunna Eneude - Quality Control')
+            with st.expander("View Profile"):
+                st.write('Profile')
               
 
             
@@ -274,4 +315,5 @@ def main():
 
 
 if __name__ == '__main__':
+    
     main()

@@ -1,4 +1,4 @@
-
+import base64
 
 
 def genre_extractor(df, col):
@@ -144,3 +144,14 @@ def loading_data():
     genome_tags =  pd.read_csv('resources/data/genome_tags.csv', index_col='tagId')
     #tags =  pd.read_csv('/kaggle/input/edsa-movie-recommendation-2022/tags.csv')
     
+
+
+
+
+def download_csv(name,df):
+    
+    csv = df.to_csv(index=False)
+    base = base64.b64encode(csv.encode()).decode()
+    file = (f'<a href="data:file/csv;base64,{base}" download="%s.csv">Download file</a>' % (name))
+    
+    return file
