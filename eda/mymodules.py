@@ -1,5 +1,19 @@
 import base64
+import matplotlib.pyplot as plt
+import seaborn as sns
+import streamlit as st
+import pandas as pd
 
+def load_datasets():
+    train_df = pd.read_csv('resources/data/train.csv')
+    test_df = pd.read_csv('resources/data/test.csv')
+
+    movies_df =  pd.read_csv('resources/data/movies.csv', index_col='movieId')
+    imdb_df =  pd.read_csv('resources/data/imdb_data.csv', index_col='movieId')
+    links_df =  pd.read_csv('resources/data/links.csv', index_col='movieId')
+    genome_scores =  pd.read_csv('resources/data/genome_scores.csv', index_col='movieId')
+    genome_tags =  pd.read_csv('resources/data/genome_tags.csv', index_col='tagId')
+    tags =  pd.read_csv('resources/data/tags.csv')
 
 def genre_extractor(df, col):
     """
@@ -29,7 +43,7 @@ def user_ratings_count(df, n):
         >>> user_ratings_count(df, 3)
             NoneType (barplot)
     """
-    plt.figure(figsize=(8,6))
+    fig = plt.figure(figsize=(8,6))
     data = df['userId'].value_counts().head(n)
     ax = sns.barplot(x = data.index, y = data, order= data.index, palette='brg', edgecolor="black")
     for p in ax.patches:
@@ -37,9 +51,7 @@ def user_ratings_count(df, n):
     plt.title(f'Top {n} Users by Number of Ratings', fontsize=14)
     plt.xlabel('User ID')
     plt.ylabel('Number of Ratings')
-    print("Combined number of ratings:\t",df['userId'].value_counts().head(n).sum(),
-        "\nTotal number of movies:\t\t", df['movieId'].nunique())
-    plt.show()
+    st.pyplot(fig)
 
 
 def ratings_distplot(df, column='rating'):
@@ -53,7 +65,7 @@ def ratings_distplot(df, column='rating'):
     -------
         distplot (NoneType): distplot of rating frequencies
     """
-    plt.figure(figsize=(8,6))
+    fig = plt.figure(figsize=(8,6))
     ax = sns.distplot(df[f'{column}'],bins=10, kde=False, hist_kws=dict(alpha=0.6),color="#4D17A0")
     mean = df[f'{column}'].mean()
     median = df[f'{column}'].median()
@@ -65,7 +77,8 @@ def ratings_distplot(df, column='rating'):
     plt.xlabel('Rating')
     plt.ylabel('Frequency')
     plt.legend()
-    plt.show()
+    st.pyplot(fig)
+
 
 
 def mean_ratings_scatter(df, color='#4DA017', column='userId'):
@@ -80,18 +93,18 @@ def mean_ratings_scatter(df, color='#4DA017', column='userId'):
     -------
         scatterplot (NoneType): scatterplot of mean number of ratings
     """
-    plt.figure(figsize=(6,4))
+    fig = plt.figure(figsize=(6,4))
     mean_ratings = df.groupby(f'{column}')['rating'].mean()
     user_counts = df.groupby(f'{column}')['movieId'].count().values
     sns.scatterplot(x=mean_ratings, y = user_counts, color=color)
     plt.title(f'Mean Ratings by Number of Ratings', fontsize=14)
     plt.xlabel('Rating')
     plt.ylabel('Number of Ratings')
-    plt.show()
+    st.pyplot(fig)
 
 
 
-def plot_ratings(count, n, color='#4DA017', best=True, method='mean'):
+def plot_ratings(df1,df2,count, n, color='#4DA017', best=True, method='mean'):
     """
     Make scatterplots of ratings.
     Parameters
@@ -124,14 +137,13 @@ def plot_ratings(count, n, color='#4DA017', best=True, method='mean'):
     else:
         plot = data.tail(n).sort_values('rating', ascending=False)
         title='Worst Rated'
-    plt.figure(figsize=(6,5))
+    fig = plt.figure(figsize=(6,5))
     sns.scatterplot(x=plot['rating'], y=plot['title'], size=plot['count'], color=color)
     plt.xlabel('Rating')
     plt.ylabel('')
     plt.tick_params(axis='y', which='both', labelleft=False, labelright=True)
     plt.title(f'Top {n} {title} Movies with Over {count} Ratings', fontsize=14)
-    plt.show()
-
+    st.pyplot(fig)
 
 
 
