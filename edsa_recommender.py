@@ -315,7 +315,7 @@ def main():
         jerry_img = Image.open('resources/imgs/Jerry.png')
         huzaifa_img = Image.open('resources/imgs/Huzaius.png')
         prince_img = Image.open('resources/imgs/Prince.png')
-        izu_img = Image.open('resources/imgs/izunna.png')
+        izu_img = Image.open('resources/imgs/Izunna.png')
 
         with prince:
             st.image(prince_img,caption='Prince Okon- Team lead')
