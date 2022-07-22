@@ -64,7 +64,7 @@ def main():
     # DO NOT REMOVE the 'Recommender System' option below, however,
     # you are welcome to add more options to enrich your app.
     page_options = ["Recommender System","EDA","Solution Overview","Feedback",'Documentation','About']
-    st.sidebar.image('resources\imgs\Screen_lot.jpg',use_column_width=True)
+    st.sidebar.image('resources/imgs/Screen_lot.jpg',use_column_width=True)
     # -------------------------------------------------------------------
     # ----------- !! THIS CODE MUST NOT BE ALTERED !! -------------------
     # -------------------------------------------------------------------
@@ -123,8 +123,8 @@ def main():
     if page_selection == "EDA":
         train_df = pd.read_csv('resources/data/train.csv')
         eda_df = train_df[train_df['userId']!=72315]
-        mov_df = pd.read_csv('resources\data\movies.csv')
-        rate_df = pd.read_csv('resources\\data\\ratings.csv')
+        mov_df = pd.read_csv('resources/data/movies.csv')
+        rate_df = pd.read_csv('resources/data/ratings.csv')
         
         
         
@@ -211,18 +211,18 @@ def main():
                 mean_ratings_scatter(eda_df,color=color_pic)
                 #st.write(user_ratings_count(train_df,8))
             elif ratings_selected == 'Plot Rating':
-                st.image('resources\imgs\plot_rating.png')
+                st.image('resources/imgs/plot_rating.png')
 
         if st.checkbox('EDA'):
-            st.image('resources\imgs\\bottom 10 mean director.png')
+            st.image('resources/imgs/bottom 10 mean director.png')
             st.success('') 
-            st.image('resources\imgs\mean rating per enre.png') 
+            st.image('resources/imgs/mean rating per enre.png') 
             st.success('')
-            st.image('resources\imgs\movies per director.png') 
+            st.image('resources/imgs/movies per director.png') 
             st.success('')
-            st.image('resources\imgs\movies per genres.png') 
+            st.image('resources/imgs/movies per genres.png') 
             st.success('')
-            st.image('resources\imgs\\top 10 mean director.png') 
+            st.image('resources/imgs/top 10 mean director.png') 
             st.success('')
             #st.image() 
 
@@ -260,11 +260,14 @@ def main():
             message = st.text_area('Message')
             
             if st.button('Submit'):
-                if feed_radio != "Other":
-                    st.success('Your {} form has been logged'.format(feed_radio))
+                if feed_radio == "Feedback":
+                    st.success('Thank you for your {}'.format(feed_radio))
+
+                elif feed_radio == 'Contact Us':
+                    st.success('Thank you for contacting us')
 
                 else:
-                    st.success('Your comment has been logged'.format(feed_radio))
+                    st.success('Thank you, Your {} has been logged'.format(subject))
 
 
     if page_selection == "Documentation":
@@ -308,11 +311,11 @@ def main():
     
         dan,jerry,izu =  st.columns(3)
 
-        dan_img = Image.open('resources\imgs\Daniel.png')
-        jerry_img = Image.open('resources\imgs\Jerry.png')
-        huzaifa_img = Image.open('resources\imgs\huzaius.png')
-        prince_img = Image.open('resources\imgs\Prince.png')
-        izu_img = Image.open('resources\imgs\izunna.png')
+        dan_img = Image.open('resources/imgs/Daniel.png')
+        jerry_img = Image.open('resources/imgs/Jerry.png')
+        huzaifa_img = Image.open('resources/imgs/huzaius.png')
+        prince_img = Image.open('resources/imgs/Prince.png')
+        izu_img = Image.open('resources/imgs/izunna.png')
 
         with prince:
             st.image(prince_img,caption='Prince Okon- Team lead')
