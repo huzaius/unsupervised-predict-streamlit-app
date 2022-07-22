@@ -104,47 +104,6 @@ def mean_ratings_scatter(df, color='#4DA017', column='userId'):
 
 
 
-def plot_ratings(df1,df2,count, n, color='#4DA017', best=True, method='mean'):
-    """
-    Make scatterplots of ratings.
-    Parameters
-    ----------
-        count (int): number of ratings threshold
-        n (int): number of movies
-        color (str): plot colour
-        best (bool): column to plot
-        method (str): statistical measure
-    Returns
-    -------
-        scatterplot (NoneType): scatterplot of mean number of ratings
-    """
-    # What are the best and worst movies
-    # Creating a new DF with mean and count
-    if method == 'mean':
-        movie_avg_ratings = pd.DataFrame(eda_df.join(movies_df, on='movieId', how='left').groupby(['movieId', 'title'])['rating'].mean())
-    else:
-        movie_avg_ratings = pd.DataFrame(eda_df.join(movies_df, on='movieId', how='left').groupby(['movieId', 'title'])['rating'].median())
-    movie_avg_ratings['count'] = eda_df.groupby('movieId')['userId'].count().values
-    movie_avg_ratings.reset_index(inplace=True)
-    movie_avg_ratings.set_index('movieId', inplace=True)
-
-    # Remove movies that have been rated fewer than n times
-    data = movie_avg_ratings[movie_avg_ratings['count']>count]
-    data.sort_values('rating', inplace= True,ascending=False)
-    if best == True:
-        plot = data.head(n).sort_values('rating', ascending=True)
-        title='Best Rated'
-    else:
-        plot = data.tail(n).sort_values('rating', ascending=False)
-        title='Worst Rated'
-    fig = plt.figure(figsize=(6,5))
-    sns.scatterplot(x=plot['rating'], y=plot['title'], size=plot['count'], color=color)
-    plt.xlabel('Rating')
-    plt.ylabel('')
-    plt.tick_params(axis='y', which='both', labelleft=False, labelright=True)
-    plt.title(f'Top {n} {title} Movies with Over {count} Ratings', fontsize=14)
-    st.pyplot(fig)
-
 
 
 def loading_data():

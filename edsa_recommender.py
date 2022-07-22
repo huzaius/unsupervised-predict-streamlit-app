@@ -64,11 +64,11 @@ def main():
     # DO NOT REMOVE the 'Recommender System' option below, however,
     # you are welcome to add more options to enrich your app.
     page_options = ["Recommender System","EDA","Solution Overview","Feedback",'Documentation','About']
-
+    st.sidebar.image('resources\imgs\Screen_lot.jpg',use_column_width=True)
     # -------------------------------------------------------------------
     # ----------- !! THIS CODE MUST NOT BE ALTERED !! -------------------
     # -------------------------------------------------------------------
-    st.sidebar.image('resources\imgs\Screen_lot.jpg',use_column_width=True)
+    
     page_selection = st.sidebar.selectbox("Choose Option", page_options)
     if page_selection == "Recommender System":
         # Header contents
@@ -125,6 +125,8 @@ def main():
         eda_df = train_df[train_df['userId']!=72315]
         mov_df = pd.read_csv('resources\data\movies.csv')
         rate_df = pd.read_csv('resources\\data\\ratings.csv')
+        
+        
         
         #movie and rating dataframe 
         
@@ -193,24 +195,36 @@ def main():
         
         # Displaying charts
         
-            
-        ratings_selected = st.selectbox('Select a type of rating',['Count Plot','Distplot','Mean Plot','Plot Rating'])
-        if ratings_selected == 'Count Plot':
+        if st.checkbox('Rating charts'):
 
-            user_count = st.number_input('Insert a number',min_value=3,max_value=20,value=8,step=1,key='user_count')
-            user_ratings_count(eda_df,int(user_count))
-            
-        elif ratings_selected == 'Distplot':
-            ratings_distplot(eda_df)
+            ratings_selected = st.selectbox('Select a type of rating',['Count Plot','Distplot','Mean Plot','Plot Rating'])
+            if ratings_selected == 'Count Plot':
 
-        elif ratings_selected == 'Mean Plot':
-            color_pic = st.color_picker('Pick a color','#4D17A0')
-            mean_ratings_scatter(eda_df,color=color_pic)
-            #st.write(user_ratings_count(train_df,8))
-        elif ratings_selected == 'Plot Rating':
-            plot_ratings(eda_df,mov_df, 10000, 15, '#4D17A0', True, 'mean')
+                user_count = st.number_input('Insert a number',min_value=3,max_value=20,value=8,step=1,key='user_count')
+                user_ratings_count(eda_df,int(user_count))
+                
+            elif ratings_selected == 'Distplot':
+                ratings_distplot(eda_df)
 
-        
+            elif ratings_selected == 'Mean Plot':
+                color_pic = st.color_picker('Pick a color','#4D17A0')
+                mean_ratings_scatter(eda_df,color=color_pic)
+                #st.write(user_ratings_count(train_df,8))
+            elif ratings_selected == 'Plot Rating':
+                st.image('resources\imgs\plot_rating.png')
+
+        if st.checkbox('EDA'):
+            st.image('resources\imgs\\bottom 10 mean director.png')
+            st.success('') 
+            st.image('resources\imgs\mean rating per enre.png') 
+            st.success('')
+            st.image('resources\imgs\movies per director.png') 
+            st.success('')
+            st.image('resources\imgs\movies per genres.png') 
+            st.success('')
+            st.image('resources\imgs\\top 10 mean director.png') 
+            st.success('')
+            #st.image() 
 
 
 
@@ -219,7 +233,7 @@ def main():
     if page_selection == "Solution Overview":
         st.title("The Screen lot Project")
         st.write("Describe your winning approach on this page")
-        st.markdown('''Having been given a sourced and clean data set, (the MovieLens dataset) which has been pre-enriched with additional data, and resampled for fair evaluation purposes, We have a task to use this raw data to build a Recommendation system algorithm (Screen lot) based on content or collaborative filtering, capable of accurately predicting how a user will rate a movie they have not yet viewed, based on their historical preferences. The idea of this algorithm is to predict the movies that would be enjoyed by a viewer based on their reactions to the movies that they have already watched. For more information on how Screenlot works and the technical details of the App, please check out the [documentation] page.''')
+        st.markdown('''Having been given a sourced and clean data set, (the MovieLens dataset) which has been pre-enriched with additional data, and resampled for fair evaluation purposes, We have a task to use this raw data to build a Recommendation system algorithm (Screen lot) based on content or collaborative filtering, capable of accurately predicting how a user will rate a movie they have not yet viewed, based on their historical preferences. The idea of this algorithm is to predict the movies that would be enjoyed by a viewer based on their reactions to the movies that they have already watched. For more information on how Screenlot works and the technical details of the App, please check out the [documentation]({page_selection} == 'Documentation') page.''')
         
 
 
@@ -283,7 +297,8 @@ def main():
         
     if page_selection == "About":    
         #st.subheader("Team NM 2")
-        st.markdown("<h3 style='text-align: center; color: magenta; background: cyan; margin: 3px'>TEAM NM2</h1>", unsafe_allow_html=True)
+        
+        st.markdown("""<h3 style='text-align: center; color: magenta; background: cyan; margin: 3px'>Screen Lot</h1>""", unsafe_allow_html=True)
         st.write("Team NM-2  is a team at the explore DS academy, 2022 Data science cohort and we employ our training here at explore DS to extract valuable insights from all kinds of raw data. Data collection and analysis are increasingly becoming very useful in industries and economies worldwide. With advances in science and technology (particularly information technology), we are in an age where an astounding quantity of data in many different forms is generated every second. This data usually has hidden insights on trends, habits, developments, changes, etc that may not be immediately identified, but are very valuable to companies and other entities for the purpose of making informed decisions.")
         st.write("Before now, it was near impossible to process these large swaths of data in order to reveal these insights. With the developments in the field of data science and through the expertise which we seek to express, we will show how data can be processed to not only reveal the insight hidden in them but also to present the discoveries made in the process in a form that is digestible by non-technical audiences. Our team is made up of 5  professionals who excel in the fields of Business Management, marketing and promotions, technical data science, IT communications, and Administration. Please refer below for  the full profiles of all team members.")
 		#st.write('Before now, it was near impossible to process these large swaths of data in order to reveal these insights. With the developments in the field of data science and through the expertise which we seek to express, we will show how data can be processed to not only reveal the insight hidden in them but also to present the discoveries made in the process in a form that is digestible by non-technical audiences. Our team is made up of 5  professionals who excel in the fields of Business Management, marketing and promotions, technical data science, IT communications, and Administration. Please refer to this link to access the full profiles of all team members.')
