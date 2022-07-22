@@ -63,7 +63,7 @@ def main():
 
     # DO NOT REMOVE the 'Recommender System' option below, however,
     # you are welcome to add more options to enrich your app.
-    page_options = ["Recommender System","EDA","Solution Overview","Feedback",'Documentation','About']
+    page_options = ["Recommender System","EDA","Movie Filter","Solution Overview","Feedback",'Documentation','About']
     st.sidebar.image('resources/imgs/Screen_lot.jpg',use_column_width=True)
     # -------------------------------------------------------------------
     # ----------- !! THIS CODE MUST NOT BE ALTERED !! -------------------
@@ -120,7 +120,7 @@ def main():
 
     # ------------- SAFE FOR ALTERING/EXTENSION -------------------
 
-    if page_selection == "EDA":
+    if page_selection == "Movie Filter":
         train_df = pd.read_csv('resources/data/train.csv')
         eda_df = train_df[train_df['userId']!=72315]
         mov_df = pd.read_csv('resources/data/movies.csv')
@@ -194,7 +194,7 @@ def main():
 
         
         # Displaying charts
-        
+       
         if st.checkbox('Rating charts'):
 
             ratings_selected = st.selectbox('Select a type of rating',['Count Plot','Distplot','Mean Plot','Plot Rating'])
@@ -213,7 +213,7 @@ def main():
             elif ratings_selected == 'Plot Rating':
                 st.image('resources/imgs/plot_rating.png')
 
-        if st.checkbox('EDA'):
+    if page_selection == "EDA":
             st.image('resources/imgs/bottom 10 mean director.png')
             st.success('') 
             st.image('resources/imgs/mean rating per enre.png') 
@@ -233,7 +233,7 @@ def main():
     if page_selection == "Solution Overview":
         st.title("The Screen lot Project")
         st.write("Describe your winning approach on this page")
-        st.markdown('''Having been given a sourced and clean data set, (the MovieLens dataset) which has been pre-enriched with additional data, and resampled for fair evaluation purposes, We have a task to use this raw data to build a Recommendation system algorithm (Screen lot) based on content or collaborative filtering, capable of accurately predicting how a user will rate a movie they have not yet viewed, based on their historical preferences. The idea of this algorithm is to predict the movies that would be enjoyed by a viewer based on their reactions to the movies that they have already watched. For more information on how Screenlot works and the technical details of the App, please check out the [documentation]({page_selection} == 'Documentation') page.''')
+        st.markdown(f'''Having been given a sourced and clean data set, (the MovieLens dataset) which has been pre-enriched with additional data, and resampled for fair evaluation purposes, We have a task to use this raw data to build a Recommendation system algorithm (Screen lot) based on content or collaborative filtering, capable of accurately predicting how a user will rate a movie they have not yet viewed, based on their historical preferences. The idea of this algorithm is to predict the movies that would be enjoyed by a viewer based on their reactions to the movies that they have already watched. For more information on how Screenlot works and the technical details of the App, please check out the ***documentation*** page.''')
         
 
 
@@ -313,7 +313,7 @@ def main():
 
         dan_img = Image.open('resources/imgs/Daniel.png')
         jerry_img = Image.open('resources/imgs/Jerry.png')
-        huzaifa_img = Image.open('resources/imgs/huzaius.png')
+        huzaifa_img = Image.open('resources/imgs/Huzaius.png')
         prince_img = Image.open('resources/imgs/Prince.png')
         izu_img = Image.open('resources/imgs/izunna.png')
 
