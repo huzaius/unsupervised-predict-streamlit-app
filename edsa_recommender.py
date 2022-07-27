@@ -199,7 +199,7 @@ def main():
         if st.checkbox('User Rating'):
 
             ratings_selected = st.selectbox('Select a type of rating',['Count Plot','Mean Plot','Distplot','Plot Rating'])
-            if ratings_selected == 'User Rating':
+            if ratings_selected == 'Count Plot':
 
                 user_count = st.number_input('Insert a number',min_value=3,max_value=20,value=8,step=1,key='user_count')
                 user_ratings_count(eda_df,int(user_count))
