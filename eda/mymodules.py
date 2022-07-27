@@ -54,30 +54,6 @@ def user_ratings_count(df, n):
     st.pyplot(fig)
 
 
-def ratings_distplot(df, column='rating'):
-    """
-    Plots the distribution of ratings in the dataset.
-    Parameters
-    ----------
-        df (DataFrame): input DataFrame
-        column (str): column to plot
-    Returns
-    -------
-        distplot (NoneType): distplot of rating frequencies
-    """
-    fig = plt.figure(figsize=(8,6))
-    ax = sns.distplot(df[f'{column}'],bins=10, kde=False, hist_kws=dict(alpha=0.6),color="#4D17A0")
-    mean = df[f'{column}'].mean()
-    median = df[f'{column}'].median()
-    plt.axvline(x=mean, label = f'mean {round(mean,2)}' , color='#4D17A0', lw=3, ls = '--')
-    plt.axvline(x=median, label = f'median {median}' , color='#4DA017', lw=3, ls = '--')
-    plt.xlim((0.5,5))
-    plt.ylim((0,2500000))
-    plt.title(f'Distribution of Ratings', fontsize=14)
-    plt.xlabel('Rating')
-    plt.ylabel('Frequency')
-    plt.legend()
-    st.pyplot(fig)
 
 
 

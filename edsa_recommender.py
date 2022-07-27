@@ -149,7 +149,7 @@ def main():
 
             message = 'Move sliders to filter dataframe'
             year_slide = ''
-            slider_1, slider_2 = st.slider('%s' % (message),0,len(gp_mov)-1,[0,len(gp_mov)-1],1)
+            slider_1, slider_2 = st.slider('%s' % (message),0,len(gp_mov[:1000])-1,[0,len(gp_mov[:1000])-1],1)
             yslider_1,y_slider_2 = st.slider('%s' % (message),1900,2020,(1902,2016))
             
             st.success('Starts from {} to {} '.format(slider_1,slider_2))
@@ -162,6 +162,7 @@ def main():
         #Searching movie  with Details
         if st.checkbox('Show movie details'):
             movie_title = gp_mov.title.unique()
+            st.write(movie_title.shape)
             movie_sel = st.selectbox('Select a Movie',movie_title)
             
             if (movie_sel in movie_title):
@@ -195,36 +196,67 @@ def main():
         
         # Displaying charts
        
-        if st.checkbox('Rating charts'):
+        if st.checkbox('User Rating'):
 
-            ratings_selected = st.selectbox('Select a type of rating',['Count Plot','Distplot','Mean Plot','Plot Rating'])
-            if ratings_selected == 'Count Plot':
+            ratings_selected = st.selectbox('Select a type of rating',['Count Plot','Mean Plot','Distplot','Plot Rating'])
+            if ratings_selected == 'User Rating':
 
                 user_count = st.number_input('Insert a number',min_value=3,max_value=20,value=8,step=1,key='user_count')
                 user_ratings_count(eda_df,int(user_count))
                 
-            elif ratings_selected == 'Distplot':
-                ratings_distplot(eda_df)
-
             elif ratings_selected == 'Mean Plot':
                 color_pic = st.color_picker('Pick a color','#4D17A0')
                 mean_ratings_scatter(eda_df,color=color_pic)
-                #st.write(user_ratings_count(train_df,8))
+                
+            elif ratings_selected == 'Distplot':
+                st.image('resources/imgs/displot.png')
+
+            
             elif ratings_selected == 'Plot Rating':
                 st.image('resources/imgs/plot_rating.png')
 
     if page_selection == "EDA":
-            st.image('resources/imgs/bottom 10 mean director.png')
-            st.success('') 
-            st.image('resources/imgs/mean rating per enre.png') 
-            st.success('')
-            st.image('resources/imgs/movies per director.png') 
-            st.success('')
+            st.header('Exploratory Data Analysis')
+            st.write('Exploratory Data Analysis shows the distribution of the Data used in the creation of the recommender system model. This distributions are available after the cleaning and the preprocessing of the data. The graphs below shows the various distribution plots gained after cleaning the data.')
+            
+            st.image('resources/imgs/movie_release_year.png')
+            st.info('This shows the movie ratings going back to the 1950\'s./n A significant increase in movie prodution was perceived from 1990 to 2000') 
+            
+            st.subheader('The charts below show distribution by Rating')
+            st.image('resources/imgs/movie rating dist.png')
+            st.info('Show the distribution of movies in relation to their ratings.') 
+            st.image('resources/imgs/users_per_rating.png')
+            st.info('This shows that a significant number of movies are rated between 3 and 4, with the largest number being 4. Conversely, we can say that a good number of movies produced are of good quality.') 
+            st.image('resources/imgs/shawshank_rating.png')
+            st.info('Amongs all the higest rated movies, Shawshank redemption was the highest rated.') 
+
+            st.subheader('The charts below show distribution by Genre')
             st.image('resources/imgs/movies per genres.png') 
-            st.success('')
-            st.image('resources/imgs/top 10 mean director.png') 
-            st.success('')
-            #st.image() 
+            st.success('The graph shows 19 distinct genres with majority of the movies being Drama with 23 percent for all movies. Comedy was the second count for genres with thriller being the third.')
+            st.image('resources/imgs/mean rating per enre.png') 
+            st.success('The highest average ratings is documentaries, while the lowest user mean ratings are  horror movies.The ratings are almost evenly distributed With the exception of Documentaries, War, Drama, Musicals, and Romance and Thriller, Action, Sci-Fi, and Horror, which score above average and significantly below average.')
+
+            st.subheader('A film director is in charge of the artistic and dramatic aspects of a film, as well as visualizing the screenplay and directing the technical crew and actors in carrying out that vision. The director is responsible for casting, production design, and all creative aspects of filmmaking.')
+            st.image('resources/imgs/movies per director.png') 
+            st.success('Illustrates the distribution of Directors') 
+            st.image('resources/imgs/mean rating per director.png')
+            st.image('resources/imgs/mean rating per director2.png')
+            st.info('Unsurprisingly, Stephen King and Quentin Tarantino are at the top of the list. The directors with the lowest ratings is Charles Robert Band is well-known for his work on horror comedies which score the least based on user ratings.') 
+            
+            st.subheader('Word Clouds')
+            st.write('Word cloud shows the prequently used words in the data.')
+            st.image('resources/imgs/wordcloud.png')
+            st.success('We can get a good idea of the most common themes in movies from these wordclouds. Keywords like sex, nudity, woman, and murder are common. This is because sex and murder seem to be present in the majority of movies, regardless of their genre.')
+            st.image('resources/imgs/wordcloud2.png')
+            st.success('The most frequent word in movie titles is "love." Among the words that appear the most frequently are Girl, Night,Life, and Man. This, in my opinion, pretty effectively captures the notion of romance\'s prevalance in movies.')
+            
+            st.image('resources/imgs/3d distribution.png') 
+            st.success('Show are 3D scatter plot')
+            st.image('resources/imgs/boxplot of scaleed features.png') 
+            
+            st.image('resources/imgs/boxplot of unscaleed features.png') 
+            
+
 
 
 
@@ -302,8 +334,9 @@ def main():
         #st.subheader("Team NM 2")
         
         st.markdown("""<h3 style='text-align: center; color: magenta; background: cyan; margin: 3px'>Screen Lot</h1>""", unsafe_allow_html=True)
-        st.write("Team NM-2  is a team at the explore DS academy, 2022 Data science cohort and we employ our training here at explore DS to extract valuable insights from all kinds of raw data. Data collection and analysis are increasingly becoming very useful in industries and economies worldwide. With advances in science and technology (particularly information technology), we are in an age where an astounding quantity of data in many different forms is generated every second. This data usually has hidden insights on trends, habits, developments, changes, etc that may not be immediately identified, but are very valuable to companies and other entities for the purpose of making informed decisions.")
-        st.write("Before now, it was near impossible to process these large swaths of data in order to reveal these insights. With the developments in the field of data science and through the expertise which we seek to express, we will show how data can be processed to not only reveal the insight hidden in them but also to present the discoveries made in the process in a form that is digestible by non-technical audiences. Our team is made up of 5  professionals who excel in the fields of Business Management, marketing and promotions, technical data science, IT communications, and Administration. Please refer below for  the full profiles of all team members.")
+        st.markdown(""" <p align='justify' >Before now, it was near impossible to process these large swaths of data in order to reveal these insights. With the developments in the field of data science and through the expertise which we seek to express, we will show how data can be processed to not only reveal the insight hidden in them but also to present the discoveries made in the process in a form that is digestible by non-technical audiences. Here at **Data Port Inc.** our team is made up of 5  professionals who excel in the fields of Business Management, marketing and promotions, technical data science, IT communications, and Administration.</p>""")
+        st.write("Data collection and analysis are increasingly becoming very useful in industries and economies worldwide. With advances in science and technology (particularly information technology), we are in an age where an astounding quantity of data in many different forms is generated every second. This data usually has hidden insights on trends, habits, developments, changes, etc that may not be immediately identified, but are very valuable to companies and other entities for the purpose of making informed decisions.")
+        st.write("Before now, it was near impossible to process these large swaths of data in order to reveal these insights. With the developments in the field of data science and through the expertise which we seek to express, we will show how data can be processed to not only reveal the insight hidden in them but also to present the discoveries made in the process in a form that is digestible by non-technical audiences. Here at **Data Port Inc.** our team is made up of 5  professionals who excel in the fields of Business Management, marketing and promotions, technical data science, IT communications, and Administration. ")
 		#st.write('Before now, it was near impossible to process these large swaths of data in order to reveal these insights. With the developments in the field of data science and through the expertise which we seek to express, we will show how data can be processed to not only reveal the insight hidden in them but also to present the discoveries made in the process in a form that is digestible by non-technical audiences. Our team is made up of 5  professionals who excel in the fields of Business Management, marketing and promotions, technical data science, IT communications, and Administration. Please refer to this link to access the full profiles of all team members.')
 
         from PIL import Image
@@ -320,27 +353,29 @@ def main():
         with prince:
             st.image(prince_img,caption='Prince Okon- Team lead')
             with st.expander("View Profile"):
-                st.write('Profile')
+                st.write('Okon Prince is the team lead of Data port Inc. He is a Data scientist with years of experience in Data sourcing, data management, and model building / Optimization. He has participated in several open competitions in model building and emerged at the top range of a number of them. He is versed in the design and creation of functional models that aim to solve real-life problems.')
+                st.write('With a sound background in the Python programing language, expert-level skills in SQL, and a wealth of soft skills gathered from years of experience working both as a private consultant and in teams in both the private and public sectors, he processes the requisite skills required to lead any world-class organization in his field.')
+                st.write('Screenlot is one of many ML products whose development he has led and the quality of these ML  products and the consistency with which they are updated testifies to the competence of the teams he led to build them')
         
         with huzaifa:
             st.image(huzaifa_img,caption='Huzaifa Abu - Technical Lead')
             with st.expander("View Profile"):
-                st.write('Profile')
+                st.write('Huzaifa Abu is  the Tech lead at Data port Inc. He is skilled in Server and Database Administration with strong skills in python,sql (T-SQL,Oracle etc.), Visualizations like PowerBI and Tableau and design and implementation of ML models. I enjoy swimming , playing football and making friends at my leasure time. ')
 
         with dan:
             st.image(dan_img,caption='Odukoya Daniel - Administrator')
             with st.expander("View Profile"):
-                st.write('Profile')
+                st.write(' Odukoya Adewale Daniel is the Administrator of Data port inc. He is a progressive minded fellow who has proven to be effective and collaborative with strong team-building  talents. I enjoy collective brainstorming sessions which all me to coordinate activities to achieve a common goal.')
 
         with jerry:
             st.image(jerry_img,caption='Jerry Iriri - Chief Designer')
             with st.expander("View Profile"):
-                st.write('Profile')
+                st.write('Iriri Jerry is a Data Scientist at Data Port Inc, specialized in system design, database administration, Development, and cloud-based services. When I\'m not working, I like to read psychology and listen to music. I am a voracious reader who loves to travel and meet new people.')
 
         with izu:
             st.image(izu_img,caption='Izunna Eneude - Quality Control')
             with st.expander("View Profile"):
-                st.write('Profile')
+                st.write('Izunna Eneude is the Quality Control Lead of Data port Inc., a unique data scientist with an innate drive for continuous learning and improvement. Coming from a quality control perspective and the mantra that there is always room for improvement, he strives through effective collaborations to deliver solutions such as the Screenlot App. Over time he has built up relevant skills and use of tools including PowerBi, Python and SQL. He is a telecom expert who loves reading, poetry and mixed martial arts.')
               
 
             
