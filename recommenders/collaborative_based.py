@@ -43,7 +43,7 @@ ratings_df = pd.read_csv('resources/data/ratings.csv')
 ratings_df.drop(['timestamp'], axis=1,inplace=True)
 
 # We make use of an SVD model trained on a subset of the MovieLens 10k dataset.
-model=pickle.load(open('resources/models/SVD.pkl', 'rb'))
+model=pickle.load(open('resources/models/SVD_colab.pkl', 'rb'))
 
 def prediction_item(item_id):
     """Map a given favourite movie to users within the
@@ -117,28 +117,32 @@ def collab_model(movie_list,top_n=10):
         Titles of the top-n movie recommendations to the user.
 
     """
-
-    indices = pd.Series(movies_df['title'])
-    movie_ids = pred_movies(movie_list)
-    df_init_users = ratings_df[ratings_df['userId']==movie_ids[0]]
-    for i in movie_ids :
-        df_init_users=df_init_users.append(ratings_df[ratings_df['userId']==i])
-    # Getting the cosine similarity matrix
-    cosine_sim = cosine_similarity(np.array(df_init_users), np.array(df_init_users))
-    idx_1 = indices[indices == movie_list[0]].index[0]
-    idx_2 = indices[indices == movie_list[1]].index[0]
-    idx_3 = indices[indices == movie_list[2]].index[0]
+   
+    #indices = pd.Series(movies_df['title'])
+   
+    
+    # Getting the index of the movie that matches the title
+    idx_1 = np.array(model.loc[movie_list[0]]).reshape(1, -1)
+    idx_2 = np.array(model.loc[movie_list[1]]).reshape(1, -1)
+    idx_3 = np.array(model.loc[movie_list[2]]).reshape(1, -1)
+    
     # Creating a Series with the similarity scores in descending order
-    rank_1 = cosine_sim[idx_1]
-    rank_2 = cosine_sim[idx_2]
-    rank_3 = cosine_sim[idx_3]
+    rank_1 = cosine_similarity(model,idx_1).reshape(-1)
+    rank_2 = cosine_similarity(model,idx_2).reshape(-1)
+    rank_3 = cosine_similarity(model,idx_3).reshape(-1)
+    
     # Calculating the scores
     score_series_1 = pd.Series(rank_1).sort_values(ascending = False)
     score_series_2 = pd.Series(rank_2).sort_values(ascending = False)
     score_series_3 = pd.Series(rank_3).sort_values(ascending = False)
+
      # Appending the names of movies
-    listings = score_series_1.append(score_series_1).append(score_series_3).sort_values(ascending = False)
+   
+    listings = pd.concat([score_series_1,score_series_2,score_series_3],axis=0)
+    #listings = score_series_1.append(score_series_2).append(score_series_3).sort_values(ascending = False)
+   
     recommended_movies = []
+    
     # Choose top 50
     top_50_indexes = list(listings.iloc[1:50].index)
     # Removing chosen movies
