@@ -135,6 +135,7 @@ def main():
         #delete dataframes to save memory
         
         del rate_df
+        
 
         gp_mov = movie_rating_df.groupby(by=['title','genres']).mean()
         
@@ -222,7 +223,7 @@ def main():
             st.image('resources/imgs/movie_release_year.png')
             st.info('This shows the movie ratings going back to the 1950\'s./n A significant increase in movie prodution was perceived from 1990 to 2000') 
             
-            st.subheader('The charts below show distribution by Rating')
+            st.subheader('Rating Distribution Charts')
             st.image('resources/imgs/movie rating dist.png')
             st.info('Show the distribution of movies in relation to their ratings.') 
             st.image('resources/imgs/users_per_rating.png')
@@ -230,13 +231,14 @@ def main():
             st.image('resources/imgs/shawshank_rating.png')
             st.info('Amongs all the higest rated movies, Shawshank redemption was the highest rated.') 
 
-            st.subheader('The charts below show distribution by Genre')
+            st.subheader('Genre Distribution Charts ')
             st.image('resources/imgs/movies per genres.png') 
             st.success('The graph shows 19 distinct genres with majority of the movies being Drama with 23 percent for all movies. Comedy was the second count for genres with thriller being the third.')
             st.image('resources/imgs/mean rating per enre.png') 
             st.success('The highest average ratings is documentaries, while the lowest user mean ratings are  horror movies.The ratings are almost evenly distributed With the exception of Documentaries, War, Drama, Musicals, and Romance and Thriller, Action, Sci-Fi, and Horror, which score above average and significantly below average.')
 
-            st.subheader('A film director is in charge of the artistic and dramatic aspects of a film, as well as visualizing the screenplay and directing the technical crew and actors in carrying out that vision. The director is responsible for casting, production design, and all creative aspects of filmmaking.')
+            st.subheader('Director Distribution Charts ')
+            st.write('A film director is in charge of the artistic and dramatic aspects of a film, as well as visualizing the screenplay and directing the technical crew and actors in carrying out that vision. The director is responsible for casting, production design, and all creative aspects of filmmaking.')
             st.image('resources/imgs/movies per director.png') 
             st.success('Illustrates the distribution of Directors') 
             st.image('resources/imgs/mean rating per director.png')
@@ -264,7 +266,6 @@ def main():
 
     if page_selection == "Solution Overview":
         st.title("The Screen lot Project")
-        st.write("Describe your winning approach on this page")
         st.markdown(f'''Having been given a sourced and clean data set, (the MovieLens dataset) which has been pre-enriched with additional data, and resampled for fair evaluation purposes, We have a task to use this raw data to build a Recommendation system algorithm (Screen lot) based on content or collaborative filtering, capable of accurately predicting how a user will rate a movie they have not yet viewed, based on their historical preferences. The idea of this algorithm is to predict the movies that would be enjoyed by a viewer based on their reactions to the movies that they have already watched. For more information on how Screenlot works and the technical details of the App, please check out the ***documentation*** page.''')
         
 
